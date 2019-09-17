@@ -9,7 +9,7 @@ import com.elearning.dto.CourseDto;
 @Service
 public interface CourseService {
 
-	public List<CourseDto> getCourses(int userId);
+	public List<CourseDto> getCourses(Integer userId);
 	
 	public CourseDto getCourse(int courseId);
 	

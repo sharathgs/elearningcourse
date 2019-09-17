@@ -6,11 +6,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.elearning.dto.CourseDto;
 import com.elearning.model.Course;
 import com.elearning.repository.CourseRepository;
+import com.elearning.util.CourseUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,16 +30,29 @@ public class CourseServiceImpl implements CourseService {
 	@Autowired
 	CourseRepository courseRepository;
 	
-	public List<CourseDto> getCourses(int userId) {
+	@Autowired
+	CourseUtil courseUtil;
+	
+	@Value("${service.url}")
+	private String enrolledUrl;
+	
+	public List<CourseDto> getCourses(Integer userId) {
+		
+		enrolledUrl = enrolledUrl+userId+"/enroll";
+		
+		List<CourseDto> getEnrolledCourses = courseUtil.getCourseByEnrolled(userId, enrolledUrl).stream().collect(Collectors.mapping((p->new CourseDto(p.getCourseId(), p.getCourseName(), p.getCourseDuration(), p.getCourseDescription(), (double) p.getCourseDuration())), Collectors.toList()));;
+		
+		
+		//getEnrolledCourses.stream().collect(Collectors.mapping((p->new CourseDto(p.getCourseId(), p.getCourseName(), p.getCourseDuration(), p.getCourseDescription(), (double) p.getCourseDuration())), Collectors.toList()));
+		
+		log.info("get event for all courses services called");
+		
 		List<Course> courseDetails = courseRepository.findAll();
 		
-		//List<CourseDto> bList = courseDetails.stream().map(Course::CourseDto).collect(Collectors.toList());
-		
-		/*List<CourseDto> courseDtoList = courseDetails.stream().map(courses -> {
-			CourseDto courseDto = new CourseDto();
-			BeanUtils.copyProperties(courses, courseDto);
-		}).collect(Collectors.toList());*/
-		log.info("get event for all courses services called");
+		/*List<CourseDto> unavailable = courseDetails.stream()
+                .filter(e -> (getEnrolledCourses.stream()
+                        .filter(d -> d.getCourseId().equals(e.getCourseId())))
+                        .collect(Collectors.toList()));*/
 		
 		List<CourseDto> courseDtoList = courseDetails.stream().collect(Collectors.mapping
 				(p->new CourseDto(p.getCourseId(), p.getCourseName(), p.getCourseDuration(), p.getCourseDescription(), (double) p.getCourseDuration()), Collectors.toList()));

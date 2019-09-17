@@ -2,8 +2,10 @@ package com.elearning.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,6 +31,7 @@ public class CourseServiceTest {
 	
 	List<Course> getCourseAllDetails ;
 
+	@Before
 	public void setup() {
 
 		 course = new Course();
@@ -50,18 +53,23 @@ public class CourseServiceTest {
 		 getCourseAllDetails.add(course);
 		 getCourseAllDetails.add(course1);
 		 
-	}
-	
-	
-	
+	}	
 	
 	
 	@Test
 	public void getCourseDetailsTest()
 	{		
 		Mockito.when(courseRepository.findAll()).thenReturn(getCourseAllDetails);
-		List<CourseDto> getCourseDetails = courseService.getCourses(Mockito.anyInt());
+		List<CourseDto> getCourseDetails = courseService.getCourses(2);
 		Assert.assertEquals(getCourseDetails.size(),getCourseAllDetails.size());
+	}
+	
+	@Test
+	public void getCourseTest()
+	{
+		Mockito.when(courseRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(course));
+		CourseDto courseDto = courseService.getCourse(1);
+		Assert.assertEquals(courseDto.getCourseDescription(), course.getCourseDescription());
 	}
 	
 }

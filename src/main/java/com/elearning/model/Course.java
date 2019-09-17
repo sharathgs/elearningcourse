@@ -1,6 +1,7 @@
 package com.elearning.model;
 
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import lombok.Getter;
 @Setter
 @Table
 @Entity
+@ToString
 public class Course {
 	
 	@Id
